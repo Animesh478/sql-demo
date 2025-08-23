@@ -1,5 +1,6 @@
 const db = require("../utils/db-connection");
 const Student = require("../Models/student");
+const IdentityCard = require("../Models/identityCard");
 
 const getEntry = (req, res) => {
   const id = req.params.id;
@@ -59,6 +60,19 @@ const addEntries = async (req, res) => {
     res.status(200).send(`Student with name ${name} successfully added`);
   });
   */
+};
+
+const addValuesToStudentAndIdentityTable = async (req, res) => {
+  try {
+    const student = await Student.create(req.body.student);
+    const idCard = await IdentityCard.create({
+      ...req.body.identityCard,
+      studentId: student.id,
+    });
+    res.status(201).json({ student, idCard });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const updateEntry = async (req, res) => {
@@ -152,4 +166,5 @@ module.exports = {
   addEntries,
   updateEntry,
   deleteEntry,
+  addValuesToStudentAndIdentityTable,
 };
