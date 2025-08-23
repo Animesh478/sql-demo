@@ -61,10 +61,29 @@ const addEntries = async (req, res) => {
   */
 };
 
-const updateEntry = (req, res) => {
-  const id = req.params.id;
-  const { name, email } = req.body;
+const updateEntry = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { name, email, age } = req.body;
 
+    // find the student that we want to update
+    const student = await Student.findByPk(id);
+    if (!student) {
+      // if the student is not found
+      res.status(404).send("Student not found");
+      return;
+    }
+    student.name = name;
+    student.email = email;
+    student.age = age;
+
+    await student.save();
+    res.status(200).send("Student details has been updated");
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send(error.message);
+  }
+  /*
   const updateQuery = "UPDATE Students SET name=?, email=? WHERE id=?";
 
   db.execute(updateQuery, [name, email, id], (err, result) => {
@@ -84,6 +103,7 @@ const updateEntry = (req, res) => {
     // if there are no errors
     res.status(200).send("Student data has been updated");
   });
+  */
 };
 
 const deleteEntry = (req, res) => {
