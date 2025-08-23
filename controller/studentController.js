@@ -1,5 +1,40 @@
 const db = require("../utils/db-connection");
 
+const getEntry = (req, res) => {
+  const id = req.params.id;
+  const selectAllQuery = "select * from students where id = ?";
+
+  db.execute(selectAllQuery, [id], (err, result) => {
+    if (err) {
+      console.log(err.message);
+      res.status(500).send(err.message);
+      db.end();
+      return;
+    }
+
+    if (result.affectedRows === 0) {
+      res.status(404).send("Student Not Found");
+      return;
+    }
+
+    res.status(200).send(result);
+  });
+};
+
+const getAllEntries = (req, res) => {
+  const selectQuery = "select * from students";
+
+  db.execute(selectQuery, (err, result) => {
+    if (err) {
+      console.log(err.message);
+      res.status(500).send(err.message);
+      db.end();
+      return;
+    }
+    res.status(200).send(result);
+  });
+};
+
 const addEntries = (req, res) => {
   const { name, email } = req.body;
   const insertQuery = `INSERT INTO Students (name, email) VALUES (?, ?)`;
@@ -62,6 +97,8 @@ const deleteEntry = (req, res) => {
 };
 
 module.exports = {
+  getEntry,
+  getAllEntries,
   addEntries,
   updateEntry,
   deleteEntry,
