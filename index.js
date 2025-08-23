@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/students", studentRoutes);
 
 // syncing the database
-db.sync({ force: true })
+db.sync()
   .then(() => {
     app.listen(3000, () => {
       console.log("Server is running on port 3000");

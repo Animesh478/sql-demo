@@ -1,4 +1,5 @@
 const db = require("../utils/db-connection");
+const Student = require("../Models/student");
 
 const getEntry = (req, res) => {
   const id = req.params.id;
@@ -35,8 +36,17 @@ const getAllEntries = (req, res) => {
   });
 };
 
-const addEntries = (req, res) => {
-  const { name, email } = req.body;
+// post request - insert a new entry
+const addEntries = async (req, res) => {
+  const { name, email, age } = req.body;
+  try {
+    const student = await Student.create({ name, email, age });
+    res.status(201).send(`Student with name ${name} has been created`);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Unable to make an entry");
+  }
+  /*
   const insertQuery = `INSERT INTO Students (name, email) VALUES (?, ?)`;
 
   db.execute(insertQuery, [name, email], (err) => {
@@ -48,6 +58,7 @@ const addEntries = (req, res) => {
     }
     res.status(200).send(`Student with name ${name} successfully added`);
   });
+  */
 };
 
 const updateEntry = (req, res) => {
